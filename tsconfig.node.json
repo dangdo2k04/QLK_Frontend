@@ -12,6 +12,8 @@
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
+    
+    "types": ["vite/client"],
 
     /* Linting */
     "strict": true,
