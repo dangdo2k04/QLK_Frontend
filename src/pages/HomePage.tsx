@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../config/axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
 import { Image, Row, Col, Select, Button, Spin, Empty, Badge, Tag, Typography, Divider, Card, Space } from 'antd';
 import { 

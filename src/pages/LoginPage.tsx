@@ -116,17 +116,6 @@ const containerStyle: React.CSSProperties = {
   overflow: 'hidden',
 };
 
-const videoStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  zIndex: 0,
-  opacity: 0.6,
-};
-
 const cardStyle: React.CSSProperties = {
   width: '100%',
   maxWidth: '420px',

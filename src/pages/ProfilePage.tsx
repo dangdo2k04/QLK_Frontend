@@ -10,7 +10,7 @@ import {
   MailOutlined, PhoneOutlined, HomeOutlined 
 } from '@ant-design/icons';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 // Định nghĩa kiểu dữ liệu khớp 100% với Backend
 interface UserProfile {

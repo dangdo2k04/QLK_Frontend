@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Form, Input, Button, Table, Select, Space, Card, 
+  Form, Input, Button, Table, Select, Card, 
   Typography, InputNumber, Divider, message, Row, Col, 
   notification
 } from 'antd';

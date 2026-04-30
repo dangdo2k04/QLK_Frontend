@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../config/axios';
 import { useAuth } from '../context/AuthContext';
 import { Row, Col, Carousel, Tag, InputNumber, Button, Typography, Divider, message, Card, Drawer, Space } from 'antd';
-import { ShoppingCartOutlined, CreditCardOutlined, SafetyOutlined, DropboxOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { ShoppingCartOutlined, CreditCardOutlined, DropboxOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import Footer from '../components/layout/Footer';
 
 const { Title, Text, Paragraph } = Typography;

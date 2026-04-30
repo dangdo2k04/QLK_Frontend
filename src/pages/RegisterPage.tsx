@@ -5,19 +5,16 @@ import {
   MailOutlined, 
   LockOutlined, 
   PhoneOutlined, 
-  HomeOutlined,
   UserAddOutlined 
 } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../config/axios';
-import { useAuth } from '../context/AuthContext';
 
 const { Title, Text } = Typography;
 
 const RegisterPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth(); // Nếu bạn muốn đăng nhập ngay sau khi đăng ký
 
   const onFinish = async (values: any) => {
     try {

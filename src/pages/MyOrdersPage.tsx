@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import api from '../config/axios';
 import { useAuth } from '../context/AuthContext';
-import { Card, Col, Row, Tag, Spin, Alert, Typography, Button, Empty, Divider } from 'antd';
+import { Card, Col, Row, Tag, Spin, Typography, Button, Empty, Divider } from 'antd';
 import { ShoppingOutlined, ClockCircleOutlined, CheckCircleOutlined, CarOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -32,7 +31,7 @@ interface Order {
 const MyOrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const { token } = useAuth();
 
   // 2. Hàm lấy danh sách đơn hàng (Fix Route 404)

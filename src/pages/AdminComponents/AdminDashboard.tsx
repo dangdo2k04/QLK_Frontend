@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, Row, Col, Spin, Alert, Statistic, Typography, 
-  Button, Space, Divider, Table, Tag, Empty, 
+  Button, Space, Table, Tag, Empty, 
   message
 } from 'antd';
 import { Line, Doughnut } from 'react-chartjs-2';
@@ -12,7 +12,7 @@ import {
 import {
   UserOutlined, ShoppingOutlined, DollarCircleOutlined,
   InboxOutlined, ReloadOutlined, FileExcelOutlined,
-  WarningOutlined, ArrowUpOutlined
+  WarningOutlined
 } from '@ant-design/icons';
 import api from '../../config/axios';
 import { useAuth } from '../../context/AuthContext';

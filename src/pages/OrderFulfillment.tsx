@@ -14,7 +14,6 @@ import {
 } from '@ant-design/icons';
 import api from '../config/axios';
 import dayjs from 'dayjs';
-import { useReactToPrint } from 'react-to-print';
 
 const { Title, Text } = Typography;
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../config/axios';
 import { useAuth } from '../context/AuthContext'; 
-import { Card, Steps, Table, Tag, Typography, Divider, Button, Row, Col, Spin, Alert, Empty } from 'antd';
+import { Card, Steps, Tag, Typography, Divider, Button, Row, Col, Spin, Alert, Empty } from 'antd';
 import { ShoppingOutlined, UserOutlined, HomeOutlined, ArrowLeftOutlined, CheckCircleOutlined, ClockCircleOutlined, CarOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Spin, Alert, Button, Modal, Select, Row, Col, Input, DatePicker, Tag, Typography, message } from 'antd';
-import { EditOutlined, DeleteOutlined, SearchOutlined, EyeOutlined, PrinterOutlined } from '@ant-design/icons';
+import { EditOutlined, SearchOutlined, EyeOutlined, PrinterOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/axios';
-import { useAuth } from '../../context/AuthContext';
 import dayjs from 'dayjs';
 
 const { Text, Title } = Typography;
@@ -32,7 +31,6 @@ const AdminOrder: React.FC = () => {
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { token } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const [newStatus, setNewStatus] = useState<string>('');
