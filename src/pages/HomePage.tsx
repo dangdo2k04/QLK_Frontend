@@ -14,7 +14,7 @@ import {
 
 // Assets
 import slideshow_1 from '../assets/images/slideshow_1.png';
-import slideshow_2 from '../assets/images/slideshow_2.jpg';
+
 import slideshow_3 from '../assets/images/slideshow_3.png';
 
 // CSS
@@ -39,7 +39,7 @@ interface Product {
   maSanPham: string;
 }
 
-const arrImages = [slideshow_1, slideshow_2, slideshow_3];
+const arrImages = [slideshow_1, slideshow_3];
 
 // Component Slider
 const SliderComponent: React.FC = () => {
@@ -139,16 +139,16 @@ const HomePage: React.FC = () => {
 
         <div style={{ textAlign: 'center', margin: '50px 0' }}>
           <Title level={1} style={{ color: '#df5dcb', fontSize: '3.5rem', marginBottom: '0' }}>
-            TIỆM NHÀ <span style={{ color: '#00a2ff' }}>ĐĂNG</span>
+            ĐĂNG ĐÔ <span style={{ color: '#df5dcb' }}>BRICK</span>
           </Title>
-          <Text style={{ fontSize: '1.2rem', color: '#595959' }}>Mô hình xe đẳng cấp - Giá rẻ vô đối</Text>
+          <Text style={{ fontSize: '1.2rem', color: '#595959' }}>Mô hình lắp ghép thông minh - Giá rẻ vô đối</Text>
         </div>
 
         <Row gutter={[30, 30]}>
           {/* SIDEBAR FILTER */}
           <Col xs={24} lg={6}>
             <Card 
-              style={{ borderRadius: '15px', position: 'sticky', top: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+              style={{ borderRadius: '15px', position: 'sticky', top: '20px', boxShadow: '0 4px 12px rgba(247, 86, 233, 0.05)' }}
               title={<span><FilterOutlined /> BỘ LỌC TÌM KIẾM</span>}
             >
               <div style={{ marginBottom: '25px' }}>
@@ -182,7 +182,7 @@ const HomePage: React.FC = () => {
               <Divider />
               <div style={{ background: '#e6f7ff', padding: '15px', borderRadius: '8px' }}>
                 <Text type="secondary">Hotline hỗ trợ:</Text>
-                <Title level={5} style={{ margin: 0, color: '#1890ff' }}>090x xxx xxx</Title>
+                <Title level={5} style={{ margin: 0, color: '#1890ff' }}>0367 688 688</Title>
               </div>
             </Card>
           </Col>

@@ -291,16 +291,16 @@ const InventoryDashboard: React.FC = () => {
         width={750}
         destroyOnClose
       >
-        <Form form={form} layout="vertical" onFinish={handleCreateProduct} initialValues={{ donViTinh: 'Cái', nguongThongBao: 5, trangThai: 'DangBan' }}>
+        <Form form={form} layout="vertical" onFinish={handleCreateProduct} initialValues={{ donViTinh: 'Bộ', nguongThongBao: 5, trangThai: 'DangBan' }}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="maSanPham" label="Mã Sản Phẩm (SKU)" rules={[{ required: true, message: 'Mã SP là bắt buộc' }]}>
-                <Input placeholder="Ví dụ: XE-001" />
+                <Input placeholder="Ví dụ: LG-001" />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name="tenSanPham" label="Tên Sản Phẩm" rules={[{ required: true, message: 'Tên SP là bắt buộc' }]}>
-                <Input placeholder="Tên mô hình xe..." />
+                <Input placeholder="Tên mô hình " />
               </Form.Item>
             </Col>
           </Row>
