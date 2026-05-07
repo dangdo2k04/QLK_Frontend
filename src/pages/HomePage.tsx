@@ -100,36 +100,47 @@ const HomePage: React.FC = () => {
   }, []);
 
   // 2. Lấy danh sách sản phẩm theo bộ lọc và phân trang
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await api.get('/san-pham', {
-          params: {
-            trang: currentPage,
-            gioiHan: itemsPerPage,
-            sapXep: sortOrder,
-            danhMuc: selectedCategory === 'all' ? undefined : selectedCategory
-          }
-        });
+  // Thêm useEffect để reset trang về 1 khi lọc
+useEffect(() => {
+  setCurrentPage(1);
+}, [selectedCategory, sortOrder]); // Mỗi khi đổi loại hoặc sắp xếp, về trang 1
 
-        if (response.data.success) {
-          setProducts(response.data.duLieu);
-          setTotalItems(response.data.tong || 0);
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/san-pham', {
+        params: {
+          trang: currentPage,
+          gioiHan: itemsPerPage,
+          sapXep: sortOrder,
+          // Nếu Backend nhận ID, đảm bảo selectedCategory là ID
+          danhMuc: selectedCategory === 'all' ? undefined : selectedCategory
         }
-      } catch (err) {
-        console.error('Lỗi lấy sản phẩm:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, [sortOrder, currentPage, selectedCategory]);
+      });
 
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    window.scrollTo({ top: 500, behavior: 'smooth' });
+      if (response.data.success) {
+        setProducts(response.data.duLieu);
+        // Kiểm tra đúng tên trường trả về từ Backend (của bạn là soLuong)
+        setTotalItems(response.data.soLuong || 0); 
+      }
+    } catch (err) {
+      console.error('Lỗi lấy sản phẩm:', err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  fetchProducts();
+  // Bổ sung itemsPerPage vào đây
+}, [sortOrder, currentPage, selectedCategory, itemsPerPage]); 
+
+const handlePageChange = (newPage: number) => {
+  setCurrentPage(newPage);
+  // Cuộn lên đầu danh sách sản phẩm thay vì số cứng 500
+  const productListTop = document.getElementById('product-list')?.offsetTop || 500;
+  window.scrollTo({ top: productListTop - 100, behavior: 'smooth' });
+};
 
   return (
     <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
