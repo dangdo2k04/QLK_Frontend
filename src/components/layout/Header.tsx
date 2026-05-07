@@ -52,9 +52,9 @@ const Header: React.FC = () => {
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Link to="/">
           <img 
-            src="https://theme.hstatic.net/200000726533/1001318947/14/logo_large.png?v=976" 
+            src="https://sf-static.upanhlaylink.com/img/image_20251018e2d6e4e3ba6b85242ea957a766812144.jpg" 
             alt="Tiệm nhà Đăng" 
-            style={{ height: '50px', objectFit: 'contain' }} 
+            style={{ height: '68px', objectFit: 'contain' }} 
           />
         </Link>
       </div>
@@ -154,7 +154,7 @@ const headerStyle: React.CSSProperties = {
   justifyContent: 'space-between',
   padding: '0 50px',
   height: '75px',
-  backgroundColor: '#0a293c', // Màu xanh đậm thương hiệu của bạn
+  backgroundColor: '#fc83c9', 
   boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
   position: 'sticky',
   top: 0,
