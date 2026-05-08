@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Table, Card, Tag, Button, Modal, Form, Input, 
-  InputNumber, Select, Row, Col, Space, Image, 
-  Typography, Switch, Badge, message, Tooltip 
+   Select, Row, Col, Space, Image, 
+  Typography, Badge, message, Tooltip 
 } from 'antd';
 import { 
   PlusOutlined, EditOutlined, DeleteOutlined, 
@@ -35,8 +35,8 @@ const AdminProduct: React.FC = () => {
   // 1. QUAN TRỌNG: State lưu tổng số bản ghi từ Backend để hiển thị số trang
   const [totalRecords, setTotalRecords] = useState(0);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [, setIsModalOpen] = useState(false);
+  const [, setEditingId] = useState<string | null>(null);
   const [form] = Form.useForm();
 
   const [queryParams, setQueryParams] = useState({
