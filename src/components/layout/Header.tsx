@@ -53,7 +53,7 @@ const Header: React.FC = () => {
         <Link to="/">
           <img 
             src="https://sf-static.upanhlaylink.com/img/image_20251018e2d6e4e3ba6b85242ea957a766812144.jpg" 
-            alt="Tiệm nhà Đăng" 
+            alt="Đăng Đô Brick" 
             style={{ height: '68px', objectFit: 'contain' }} 
           />
         </Link>

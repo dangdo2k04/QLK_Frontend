@@ -231,7 +231,7 @@ const ProductDetailsPage: React.FC = () => {
 
         {/* SẢN PHẨM TƯƠNG TỰ */}
         <div style={{ marginTop: '60px' }}>
-          <Divider orientation="left"><Title level={3}>Sản phẩm cùng loại</Title></Divider>
+          <Divider orientation="left"><Title level={3}></Title></Divider>
           <Row gutter={[20, 20]}>
             {similarProducts.map((p) => (
               <Col xs={12} sm={8} md={6} key={p._id}>

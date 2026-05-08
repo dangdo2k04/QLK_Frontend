@@ -84,7 +84,7 @@ const HomePage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<string>('createdAt,desc');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalItems, setTotalItems] = useState<number>(0);
-  const itemsPerPage = 12;
+  const itemsPerPage = 9;
 
   // 1. Lấy danh sách danh mục khi load trang
   useEffect(() => {
