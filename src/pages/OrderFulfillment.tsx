@@ -69,15 +69,38 @@ const OrderFulfillment: React.FC = () => {
   }, [searchKey, pickingLists]);
 
   // 3. Hàm gọi API xuất file Excel nhặt hàng (Picking List)
-  const handleExportExcel = async (phieuId: string, maPhieu: string) => {
-    try {
-      message.loading(`Đang khởi tạo file cho phiếu ${maPhieu}...`);
-      // Gọi API tải file đã viết ở Backend
-      window.open(`${import.meta.env.VITE_API_URL}/api/v1/don-hang/xuat-picking/${phieuId}`, '_blank');
-    } catch (err) {
-      message.error('Lỗi khi xuất file Excel');
-    }
-  };
+const handleExportExcel = async (phieuId: string, maPhieu: string) => {
+  const hide = message.loading(`Đang khởi tạo file cho phiếu ${maPhieu}...`, 0);
+  try {
+    const response = await api.get(`/don-hang/xuat-picking/${phieuId}`, {
+      responseType: 'blob', // QUAN TRỌNG: Để nhận dữ liệu nhị phân của file Excel
+    });
+
+    // 1. Tạo một URL từ dữ liệu nhị phân (Blob)
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    
+    // 2. Tạo một thẻ <a> ẩn để kích hoạt download
+    const link = document.createElement('a');
+    link.href = url;
+    
+    // Đặt tên file khi tải về
+    link.setAttribute('download', `PickingList-${maPhieu}.xlsx`);
+    
+    // 3. Gắn vào DOM, click và dọn dẹp
+    document.body.appendChild(link);
+    link.click();
+    
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url); // Giải phóng bộ nhớ
+
+    message.success(`Đã tải xong phiếu ${maPhieu}`);
+  } catch (err: any) {
+    console.error("Lỗi xuất file:", err);
+    message.error('Không thể xuất file Excel. Vui lòng kiểm tra quyền hạn!');
+  } finally {
+    hide(); // Đóng loading message
+  }
+};
 
   // 4. Xác nhận đã nhặt xong hàng và xuất kho thực tế
   const confirmFulfillment = async (phieuId: string) => {
