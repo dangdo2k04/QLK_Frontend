@@ -1,278 +1,221 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Table, Card, Tag, Button, Typography, Space, 
-  message, Modal, Divider, Col, Row, Tooltip, Input, DatePicker 
+  message, Modal, Col, Row, Tooltip, Input, Badge 
 } from 'antd';
 import { 
   InboxOutlined, 
-  RocketOutlined, 
-  PrinterOutlined, 
+  FileExcelOutlined,  
   SearchOutlined,
-  InfoCircleOutlined,
+  CheckCircleOutlined,
   TruckOutlined,
-  ReloadOutlined
+  ReloadOutlined,
+  BarcodeOutlined
 } from '@ant-design/icons';
 import api from '../config/axios';
-import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
-// Định nghĩa Interface để đồng bộ dữ liệu
-interface Order {
+// Đồng bộ Interface với Schema PhieuXuat
+interface PickingList {
   _id: string;
-  maDonHang: string;
-  khachHang: { ten: string; email: string; soDienThoai: string; diaChi: string } | null;
-  items: any[];
-  tongTien: number;
-  phuongThucThanhToan: string;
-  trangThaiDonHang: string;
-  ghiChu?: string;
+  maPhieu: string;
+  donHang: { 
+    maDonHang: string; 
+    khachHang: { ten: string; soDienThoai: string };
+    diaChiGiaoHang: string;
+    ghiChu: string;
+  };
+  chiTietXuat: any[];
+  trangThai: string;
   createdAt: string;
-  diaChiGiaoHang?: string;
 }
 
 const OrderFulfillment: React.FC = () => {
   const [modal, contextHolder] = Modal.useModal();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [pickingLists, setPickingLists] = useState<PickingList[]>([]);
+  const [filteredLists, setFilteredLists] = useState<PickingList[]>([]);
   const [loading, setLoading] = useState(false);
-  
-  // States cho bộ lọc giống OrderAdmin
   const [searchKey, setSearchKey] = useState<string>(''); 
-  const [searchDate, setSearchDate] = useState<dayjs.Dayjs | null>(null);
 
-  // 1. Lấy danh sách đơn hàng 'ChoXacNhan' từ hệ thống
-  const fetchPendingOrders = async () => {
+  // 1. Lấy danh sách PHIẾU XUẤT đang chờ nhặt hàng
+  const fetchPickingLists = async () => {
     setLoading(true);
     try {
-      const res = await api.get('don-hang/he-thong/tat-ca?trangThaiDonHang=ChoXacNhan');
-      // Giả sử API trả về { success: true, duLieu: [...] }
+      // API này lấy từ Schema PhieuXuat
+      const res = await api.get('/xuat-kho/');
       const data = res.data.duLieu || [];
-      setOrders(data);
-      setFilteredOrders(data);
+      setPickingLists(data);
+      setFilteredLists(data);
     } catch (err) {
-      message.error('Không thể tải danh sách đơn hàng cần chuẩn bị');
+      message.error('Không thể tải danh sách phiếu chuẩn bị hàng');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPendingOrders();
+    fetchPickingLists();
   }, []);
 
-  // 2. Logic lọc dữ liệu client-side (giống OrderAdmin)
+  // 2. Lọc nhanh theo mã phiếu hoặc mã đơn
   useEffect(() => {
-    let filtered = orders;
-    
-    if (searchKey) {
-      filtered = filtered.filter((order) =>
-        order.maDonHang.toLowerCase().includes(searchKey.toLowerCase()) ||
-        order.khachHang?.ten.toLowerCase().includes(searchKey.toLowerCase()) ||
-        order.khachHang?.soDienThoai.includes(searchKey)
-      );
-    }
-    
-    if (searchDate) {
-      const dateStr = searchDate.format('YYYY-MM-DD');
-      filtered = filtered.filter((order) => dayjs(order.createdAt).format('YYYY-MM-DD') === dateStr);
-    }
-    
-    setFilteredOrders(filtered);
-  }, [searchKey, searchDate, orders]);
+    const filtered = pickingLists.filter((item) =>
+      item.maPhieu.toLowerCase().includes(searchKey.toLowerCase()) ||
+      item.donHang?.maDonHang.toLowerCase().includes(searchKey.toLowerCase()) ||
+      item.donHang?.khachHang?.ten.toLowerCase().includes(searchKey.toLowerCase())
+    );
+    setFilteredLists(filtered);
+  }, [searchKey, pickingLists]);
 
-  // 3. Hàm xử lý xác nhận xuất kho
-  const executeFulfillment = async (orderId: string, maDonHang: string) => {
-  const hide = message.loading(`Đang xử lý xuất kho đơn ${maDonHang}...`, 0); //
-  try {
-    const res = await api.put(`/don-hang/${orderId}/trang-thai`, {
-      trangThaiMoi: 'DangGiao' //
+  // 3. Hàm gọi API xuất file Excel nhặt hàng (Picking List)
+  const handleExportExcel = async (phieuId: string, maPhieu: string) => {
+    try {
+      message.loading(`Đang khởi tạo file cho phiếu ${maPhieu}...`);
+      // Gọi API tải file đã viết ở Backend
+      window.open(`${import.meta.env.VITE_API_URL}/api/v1/don-hang/xuat-picking/${phieuId}`, '_blank');
+    } catch (err) {
+      message.error('Lỗi khi xuất file Excel');
+    }
+  };
+
+  // 4. Xác nhận đã nhặt xong hàng và xuất kho thực tế
+  const confirmFulfillment = async (phieuId: string) => {
+    try {
+      setLoading(true);
+      // API cập nhật trạng thái phiếu xuất sang DaXuatKho
+      const res = await api.put(`/phieu-xuat/${phieuId}/xac-nhan`, {
+        trangThai: 'DaXuatKho'
+      });
+
+      if (res.data.success) {
+        message.success('Xác nhận xuất kho thành công!');
+        fetchPickingLists();
+      }
+    } catch (err: any) {
+      message.error(err.response?.data?.message || 'Lỗi xác nhận');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const showConfirmModal = (record: PickingList) => {
+    modal.confirm({
+      title: `Hoàn tất nhặt hàng cho phiếu ${record.maPhieu}?`,
+      icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />,
+      content: 'Sau khi xác nhận, tồn kho sẽ chính thức được trừ và đơn hàng chuyển sang trạng thái vận chuyển.',
+      okText: 'Xác nhận xuất kho',
+      cancelText: 'Để sau',
+      onOk: () => confirmFulfillment(record._id),
     });
-
-    if (res.data.success) {
-      message.success(`Đơn hàng ${maDonHang} đã xuất kho thành công!`); //
-      fetchPendingOrders(); //
-    }
-  } catch (err: any) {
-    console.error("Lỗi Network/Server:", err); //
-    message.error(err.response?.data?.message || 'Lỗi kết nối hệ thống'); //
-  } finally {
-    hide(); //
-  }
-};
-
-// Hàm hiển thị Modal sử dụng Hook
-const handleConfirmFulfillment = (orderId: string, maDonHang: string) => {
-  modal.confirm({ // Sử dụng modal từ hook
-    title: `Xác nhận xuất kho đơn hàng ${maDonHang}?`,
-    icon: <TruckOutlined style={{ color: '#1890ff' }} />, //
-    content: (
-      <div>
-        <p>Hệ thống sẽ cập nhật trạng thái đơn hàng sang <b>"Đang giao"</b>.</p>
-        <Text type="secondary">Kho sẽ được cập nhật trạng thái vận chuyển ngay lập tức.</Text>
-      </div>
-    ),
-    okText: 'Xác nhận & Giao hàng',
-    cancelText: 'Hủy',
-    onOk: () => executeFulfillment(orderId, maDonHang), // Gọi hàm đã tách riêng
-  });
-};
+  };
 
   const columns = [
     {
-      title: 'Mã Đơn',
-      dataIndex: 'maDonHang',
-      key: 'maDonHang',
-      width: 130,
-      render: (text: string) => <Text code strong color="blue">{text}</Text>,
-    },
-    {
-      title: 'Khách Hàng',
-      key: 'customer',
-      width: 180,
-      render: (record: Order) => (
-        <Tooltip title={`Địa chỉ: ${record.diaChiGiaoHang || 'Chưa cập nhật'}`}>
-          <Space direction="vertical" size={0}>
-            <Text strong>{record.khachHang?.ten || 'Khách vãng lai'}</Text>
-            <Text type="secondary" style={{ fontSize: '12px' }}>{record.khachHang?.soDienThoai}</Text>
-          </Space>
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Danh sách nhặt hàng (Pick-list)',
-      dataIndex: 'items',
-      key: 'items',
-      render: (items: any[]) => (
-        <Card size="small" styles={{ body: { padding: '8px 12px', background: '#fafafa' } }} variant="borderless">
-          {items?.map((item: any, index: number) => (
-            <div key={index} style={{ marginBottom: 4 }}>
-              <Tag color="blue">x{item.soLuong}</Tag> 
-              <Text strong>{item.sanPham?.tenSanPham}</Text>
-            </div>
-          ))}
-        </Card>
-      ),
-    },
-    {
-      title: 'Tổng Tiền',
-      key: 'payment',
-      width: 140,
-      render: (record: Order) => (
+      title: 'Phiếu Xuất / Đơn Hàng',
+      key: 'codes',
+      width: 200,
+      render: (record: PickingList) => (
         <Space direction="vertical" size={0}>
-          <Text type="danger" strong>{record.tongTien?.toLocaleString()}đ</Text>
-          <Tag color={record.phuongThucThanhToan === 'ChuyenKhoan' ? 'purple' : 'orange'}>
-            {record.phuongThucThanhToan || 'Tiền mặt'}
-          </Tag>
+          <Text strong><BarcodeOutlined /> {record.maPhieu}</Text>
+          <Text type="secondary" style={{ fontSize: '12px' }}>Đơn: {record.donHang?.maDonHang}</Text>
         </Space>
       ),
     },
     {
-      title: 'Ngày đặt',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      width: 140,
-      render: (date: string) => dayjs(date).format('DD/MM/YYYY HH:mm'),
+      title: 'Thông tin nhặt hàng',
+      dataIndex: 'chiTietXuat',
+      key: 'items',
+      render: (items: any[]) => (
+        <div style={{ background: '#f9f9f9', padding: '8px', borderRadius: '8px' }}>
+          {items.map((item, idx) => (
+            <div key={idx} style={{ marginBottom: 4 }}>
+              <Badge count={item.soLuongYeuCau} showZero color="#108ee9" style={{ marginRight: 8 }} />
+              <Text>{item.sanPham?.tenSanPham}</Text>
+            </div>
+          ))}
+        </div>
+      ),
     },
     {
-      title: 'Thao Tác',
+      title: 'Trạng Thái',
+      dataIndex: 'trangThai',
+      key: 'trangThai',
+      width: 150,
+      render: () => <Tag color="processing" icon={<ReloadOutlined spin />}>Đang chuẩn bị</Tag>,
+    },
+    {
+      title: 'Thao Tác Kho',
       key: 'action',
-      width: 200,
+      width: 250,
       fixed: 'right' as const,
-      render: (record: Order) => (
+      render: (record: PickingList) => (
         <Space>
-          <Button 
-            size="small"
-            icon={<PrinterOutlined />} 
-            onClick={() => window.print()}
-          >
-            In Phiếu
-          </Button>
+          <Tooltip title="In danh sách cho thủ kho cầm đi nhặt hàng">
+            <Button 
+              icon={<FileExcelOutlined />} 
+              onClick={() => handleExportExcel(record._id, record.maPhieu)}
+              style={{ color: '#1f7a1f', borderColor: '#1f7a1f' }}
+            >
+              Picking List
+            </Button>
+          </Tooltip>
           <Button 
             type="primary" 
-            size="small"
-            icon={<RocketOutlined />} 
-            onClick={() => handleConfirmFulfillment(record._id, record.maDonHang)}
+            icon={<TruckOutlined />} 
+            onClick={() => showConfirmModal(record)}
           >
-            Xuất kho
+            Xác nhận xuất
           </Button>
         </Space>
       ),
     },
   ];
+
   return (
     <div style={{ padding: '24px', background: '#f0f2f5', minHeight: '100vh' }}>
-    {contextHolder}
-      <Card variant="borderless" style={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-        <Row justify="space-between" align="middle">
+      {contextHolder}
+      <Card variant="borderless" style={{ borderRadius: '12px' }}>
+        <Row justify="space-between" align="middle" style={{ marginBottom: 20 }}>
           <Col>
-            <Title level={3} style={{ margin: 0 }}>
-              <InboxOutlined /> Chuẩn bị & Xuất kho
-            </Title>
-            <Text type="secondary">
-              <InfoCircleOutlined /> Lọc đơn hàng chờ xác nhận để chuẩn bị hàng hóa.
-            </Text>
+            <Title level={3} style={{ margin: 0 }}><InboxOutlined /> Quản Lý Nhặt Hàng & Xuất Kho</Title>
+            <Text type="secondary">In Picking List và xác nhận thực xuất từ kho</Text>
           </Col>
           <Col>
-            <Button icon={<ReloadOutlined />} onClick={fetchPendingOrders} loading={loading}>
-              Làm mới
-            </Button>
+            <Button icon={<ReloadOutlined />} onClick={fetchPickingLists} loading={loading}>Làm mới</Button>
           </Col>
         </Row>
-        
-        <Divider />
 
-        {/* Bộ lọc giống OrderAdmin */}
         <Row gutter={16} style={{ marginBottom: 20 }}>
-          <Col span={10}>
+          <Col span={12}>
             <Input
-              placeholder="Mã đơn, tên hoặc số điện thoại khách hàng"
+              placeholder="Tìm theo mã phiếu, mã đơn hoặc tên khách..."
               value={searchKey}
               onChange={(e) => setSearchKey(e.target.value)}
               prefix={<SearchOutlined />}
-            />
-          </Col>
-          <Col span={6}>
-            <DatePicker
-              placeholder="Lọc theo ngày đặt"
-              onChange={(date) => setSearchDate(date)}
-              style={{ width: '100%' }}
-              allowClear
+              size="large"
             />
           </Col>
         </Row>
 
         <Table 
           columns={columns} 
-          dataSource={filteredOrders} 
+          dataSource={filteredLists} 
           rowKey="_id" 
           loading={loading}
-          pagination={{ pageSize: 8, showTotal: (total) => `Tổng cộng ${total} đơn chờ xuất` }}
-          scroll={{ x: 1100 }}
-          locale={{ emptyText: 'Hiện tại không có đơn hàng nào cần xuất kho.' }}
+          pagination={{ pageSize: 10 }}
+          scroll={{ x: 1000 }}
           expandable={{
-            expandedRowRender: (record: Order) => (
-              <div style={{ padding: '8px 24px', background: '#fff' }}>
-                <p style={{ margin: 0 }}><b>Địa chỉ giao hàng chi tiết:</b> {record.diaChiGiaoHang || 'Liên hệ khách hàng'}</p>
-                {record.ghiChu && <p style={{ margin: '8px 0 0' }}><b>Ghi chú:</b> {record.ghiChu}</p>}
+            expandedRowRender: (record) => (
+              <div style={{ padding: '10px 40px' }}>
+                <Text strong>Khách hàng: </Text> {record.donHang?.khachHang?.ten} - {record.donHang?.khachHang?.soDienThoai} <br/>
+                <Text strong>Địa chỉ giao: </Text> {record.donHang?.diaChiGiaoHang} <br/>
+                <Text strong>Ghi chú: </Text> <Text type="danger">{record.donHang?.ghiChu || 'Không có'}</Text>
               </div>
-            ),
+            )
           }}
         />
       </Card>
-      
-      <style>
-        {`
-          @media print {
-            .ant-btn, .ant-table-pagination, .ant-layout-sider, .ant-layout-header, .ant-input-affix-wrapper, .ant-picker {
-              display: none !important;
-            }
-            .ant-table-cell-fix-right {
-              display: none !important;
-            }
-          }
-        `}
-      </style>
     </div>
   );
 };
